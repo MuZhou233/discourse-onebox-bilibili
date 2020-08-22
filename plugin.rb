@@ -6,12 +6,34 @@
 
 enabled_site_setting :onebox_bilibili_enabled
 
-PLUGIN_PREFIX = 'onebox_bilibili_'.freeze
-SITE_SETTING_NAME = 'onebox_bilibili_enabled'.freeze
-ONEBOX_SETTING_NAME = 'onebox_bilibili_http_onebox_override'.freeze
+Onebox = Onebox
 
-after_initialize do
-  next unless SiteSetting.onebox_bilibili_enabled
+module Onebox
+  module Engine
+    class BilibiliOnebox
+      include Engine
+      include HTML
 
-  Dir[File.expand_path('../lib/onebox/*.rb', __FILE__)].each { |f| require f }
+      matches_regexp(/^https?:\/\/(?:www\.)?bilibili\.com\/video\/([a-zA-Z0-9]+)\/?$/)
+
+      # Try to get the video ID. Works for URLs of the form:
+      # * http://www.bilibili.com/video/av4235068/
+      def video_id
+        match = uri.path.match(/\/video\/av(\d+)(\.html)?.*/)
+        return match[1] if match && match[1]
+
+        nil
+      rescue
+        return nil
+      end
+
+      def to_html
+        "<iframe src='https://player.bilibili.com/player.html?aid=#{video_id}&page=1&as_wide=1' frameborder='0' width='640' height='430' allowfullscreen='true'></iframe>"
+      end
+
+      def placeholder_html
+        to_html
+      end
+    end
+  end
 end
