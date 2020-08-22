@@ -9,3 +9,9 @@ enabled_site_setting :onebox_bilibili_enabled
 PLUGIN_PREFIX = 'onebox_bilibili_'.freeze
 SITE_SETTING_NAME = 'onebox_bilibili_enabled'.freeze
 ONEBOX_SETTING_NAME = 'onebox_bilibili_http_onebox_override'.freeze
+
+after_initialize do
+  next unless SiteSetting.onebox_bilibili_enabled
+
+  Dir[File.expand_path('../lib/onebox/*.rb', __FILE__)].each { |f| require f }
+end
