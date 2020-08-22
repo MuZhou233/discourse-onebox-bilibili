@@ -1,0 +1,5 @@
+# encoding: utf-8
+
+en:
+  site_settings:
+    onebox_bilibili_enabled: "Enable Onebox Bilibili"

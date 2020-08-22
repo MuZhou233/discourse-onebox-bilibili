@@ -1,0 +1,4 @@
+plugins:
+  onebox_bilibili_enabled:
+    default: true
+    client: true
