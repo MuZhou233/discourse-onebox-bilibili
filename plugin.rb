@@ -1,4 +1,4 @@
-# name: Discourse Onebox bilibili
+# name: discourse-onebox-bilibili
 # about: 为 Discourse Onebox 增加了 bilibili 视频支持
 # version: 0.0.1
 # authors: MuZhou233
