@@ -4,36 +4,38 @@
 # authors: MuZhou233
 # url: https://github.com/MuZhou233/discourse-onebox-bilibili
 
-enabled_site_setting :onebox_bilibili_enabled
+class Onebox::Engine::BilibiliOnebox
+  include Onebox::Engine
 
-Onebox = Onebox
+  matches_regexp(/^https?:\/\/(?:www\.)?bilibili\.com\/video\/([a-zA-Z0-9]+)\/?$/)
+  always_https
 
-module Onebox
-  module Engine
-    class BilibiliOnebox
-      include Engine
-      include HTML
+  def video_id
+    match = uri.path.match(/\/video\/av(\d+)(\.html)?.*/)
+    return "aid=#{match[1]}" if match && match[1]
+    match = uri.path.match(/\/video\/BV([a-zA-Z0-9]+)(\.html)?.*/)
+    return "bvid=#{match[1]}" if match && match[1]
+      
+    nil
+  rescue
+    return nil
+  end
 
-      matches_regexp(/^https?:\/\/(?:www\.)?bilibili\.com\/video\/([a-zA-Z0-9]+)\/?$/)
+  def to_html
+    <<-HTML
+      <iframe 
+        src='https://player.bilibili.com/player.html?#{video_id}&page=1' 
+        scrolling="no" 
+        border="0" 
+        frameborder="no" 
+        framespacing="0" 
+        width='640' 
+        height='430' 
+        allowfullscreen='true'></iframe>
+    HTML
+  end
 
-      # Try to get the video ID. Works for URLs of the form:
-      # * http://www.bilibili.com/video/av4235068/
-      def video_id
-        match = uri.path.match(/\/video\/av(\d+)(\.html)?.*/)
-        return match[1] if match && match[1]
-
-        nil
-      rescue
-        return nil
-      end
-
-      def to_html
-        "<iframe src='https://player.bilibili.com/player.html?aid=#{video_id}&page=1&as_wide=1' frameborder='0' width='640' height='430' allowfullscreen='true'></iframe>"
-      end
-
-      def placeholder_html
-        to_html
-      end
-    end
+  def placeholder_html
+    to_html
   end
 end
