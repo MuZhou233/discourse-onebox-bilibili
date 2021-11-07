@@ -4,6 +4,10 @@
 # authors: MuZhou233
 # url: https://github.com/MuZhou233/discourse-onebox-bilibili
 
+require_relative "../../lib/onebox"
+
+Onebox = Onebox
+
 class Onebox::Engine::BilibiliOnebox
   include Onebox::Engine
 
